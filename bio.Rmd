@@ -3,7 +3,7 @@ title: "About Me"
 output: html_document
 ---
 
-I am an aspiring Data Scientist that leverages data to deliver concise data driven story telling and actionable insights. I joined the SMU MSDS program to gain a deeper understanding of the theory and applied practices of data science techniques.  I'm excited to be in this program and hope to apply this new knowledge to my work!
+I am an aspiring Data Scientist that leverages data to deliver concise data driven story telling and actionable insights.  I am currently a Business Data Analyst that provides operations and strategic support to executive leadership by using data from call centers, product, and marketing.  I joined the SMU MSDS program to gain a deeper understanding of the theory and applied practices of data science techniques and want to use this knowledge to take my work to the next level!  I'm excited to be in this program and excited for the challenges ahead.
 
 **Name**: Jeff Nguyen\
 **Location**: Austin, TX\
