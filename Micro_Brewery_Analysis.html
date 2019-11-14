@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Adam Ruthford and Jeff Nguyen" />
+
+<meta name="date" content="2019-10-19" />
+
+<title>Micro Brewery Data Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SMU MSDS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="bio.html">About Me</a>
+</li>
+<li>
+  <a href="Micro_Brewery_Analysis.html">Micro Brewery EDA</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Micro Brewery Data Analysis</h1>
+<h4 class="author">Adam Ruthford and Jeff Nguyen</h4>
+<h4 class="date">10/19/2019</h4>
+
+</div>
+
+
+<div id="import-and-clean-data" class="section level1">
+<h1>Import and clean data</h1>
+<p>The data for this project was provided by officials from Budweiser brewing company</p>
+<div id="import-data" class="section level2">
+<h2>Import data</h2>
+<p>Two data files Beers and Breweries are used in this analysis</p>
+<pre class="r"><code># Get raw data (Will Vary on Source Location)
+Beers &lt;- read.csv(&quot;C:\\Users\\Jeff Nguyen\\Desktop\\MSDS\\Data Science\\6306_Project1\\Beers.csv&quot;)
+Breweries &lt;- read.csv(&quot;C:\\Users\\Jeff Nguyen\\Desktop\\MSDS\\Data Science\\6306_Project1\\Breweries.csv&quot;)</code></pre>
+</div>
+<div id="clean-data" class="section level2">
+<h2>Clean Data</h2>
+<p>Data was examined for missing and duplicate values Cleaning data took the place in several steps</p>
+<div id="duplicate-breweries" class="section level3">
+<h3>Duplicate breweries</h3>
+<p>Two duplicate breweries were found, Summit Brewing Company of St Paul, MN and Sly Fox Brewing Company of Phoenxiville, PA. Beers related to one of the removed breweries were reassigned to the other brewery</p>
+<pre class="r"><code># Fix duplicate Breweries, Just assign all Beers to one of the duplicates
+#Breweries %&gt;% filter(Breweries$Name==&quot;Summit Brewing Company&quot;)
+Beers[Beers$Brewery_id == 139,]$Brewery_id &lt;- 59
+
+#Breweries %&gt;% filter(Breweries$Name==&quot;Sly Fox Brewing Company&quot;)
+Beers[Beers$Brewery_id == 164,]$Brewery_id &lt;- 372
+
+# Remove duplicate brewery
+Breweries &lt;- Breweries[!(Breweries$Brew_ID == 139 | Breweries$Brew_ID == 164),]</code></pre>
+</div>
+<div id="unique-beers" class="section level3">
+<h3>Unique Beers</h3>
+<p>Several beers were duplicated in the provided data. A unique set of beers was created. For the purposes of this analysis beer name and brewery id are assumed to be unique</p>
+<pre class="r"><code>UniqueBeers &lt;- Beers %&gt;% group_by(Name,Brewery_id) %&gt;% summarize(minBeer_ID = min(Beer_ID)) %&gt;% select(minBeer_ID)
+
+Beers &lt;- inner_join(Beers, UniqueBeers, by = c(&quot;Beer_ID&quot; = &quot;minBeer_ID&quot;)) %&gt;%
+  select(Name = Name.x, Beer_ID, ABV, IBU, Brewery_id, Style, Ounces)</code></pre>
+</div>
+</div>
+</div>
+<div id="analysis-questions" class="section level1">
+<h1>Analysis Questions</h1>
+<p>Questions 1,3,4,5,6,7 answered below</p>
+<div id="question-1-how-many-breweries-are-in-each-state" class="section level2">
+<h2>Question 1 : How many breweries are in each state?</h2>
+<pre class="r"><code>BreweriesByState &lt;- Breweries %&gt;% select(State) %&gt;% group_by(State) %&gt;% count()
+#head(BreweriesByState, 51)
+firstBreweries = BreweriesByState[1:17,]
+secondBreweries = BreweriesByState[18:34,]
+thirdBreweries = BreweriesByState[35:51,]
+BreweriesByStateWD &lt;- cbind(firstBreweries,secondBreweries,thirdBreweries)
+knitr::kable(BreweriesByStateWD,
+             format = &quot;html&quot;,
+             caption = &quot;Breweries by State&quot;,
+             col.names = c(&quot;State&quot;,&quot;Brewery Count&quot;,&quot;State&quot;,&quot;Brewery Count&quot;,&quot;State&quot;,&quot;Brewery Count&quot;)) %&gt;% 
+  column_spec(1:6, width = &quot;1.1in&quot;) %&gt;% 
+  row_spec(1:17,align = &quot;center&quot;) %&gt;% kable_styling(bootstrap_options = c(&quot;hover&quot;))</code></pre>
+<table class="table table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Breweries by State
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+State
+</th>
+<th style="text-align:right;">
+Brewery Count
+</th>
+<th style="text-align:left;">
+State
+</th>
+<th style="text-align:right;">
+Brewery Count
+</th>
+<th style="text-align:left;">
+State
+</th>
+<th style="text-align:right;">
+Brewery Count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+AK
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+7
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+KY
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+4
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NY
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+AL
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+3
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+LA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+5
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+OH
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+AR
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+2
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+23
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+OK
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+AZ
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+11
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MD
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+7
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+OR
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+CA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+39
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+ME
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+9
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+PA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+CO
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+47
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MI
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+32
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+RI
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+CT
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+8
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MN
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+11
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+SC
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+DC
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+1
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MO
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+9
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+SD
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+DE
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+2
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MS
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+2
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+TN
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+FL
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+15
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+MT
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+9
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+TX
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+28
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+GA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+7
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NC
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+19
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+UT
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+HI
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+4
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+ND
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+1
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+VA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+IA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+5
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NE
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+5
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+VT
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+ID
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+5
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NH
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+3
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+WA
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+IL
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+18
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NJ
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+3
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+WI
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+IN
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+22
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NM
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+4
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+WV
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+KS
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+3
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+NV
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+2
+</td>
+<td style="text-align:left;width: 1.1in; text-align: center;">
+WY
+</td>
+<td style="text-align:right;width: 1.1in; text-align: center;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="question-2-data-from-beers-and-breweries-was-joined-together" class="section level2">
+<h2>Question 2 : Data from Beers and Breweries was joined together</h2>
+</div>
+<div id="question-3-addressing-missing-data-values" class="section level2">
+<h2>Question 3 : Addressing missing data values</h2>
+<p>62 beers are missing ABV content and 990 beers are missing IBU rating. Mean ABV and IBU data for beers computed by style will be substituted for the missing data</p>
+<div id="compute-mean-abv-by-style" class="section level3">
+<h3>Compute Mean ABV by Style</h3>
+<pre class="r"><code># Get tables of Mean ABV and IBU by Style. Use those values to replace NA data
+ABVByStyle &lt;- Beers %&gt;% 
+  dplyr::group_by(Style) %&gt;% 
+  dplyr::summarize(ABVStyle = mean(ABV, na.rm = TRUE)) %&gt;% 
+  select(Style, ABVStyle) </code></pre>
+</div>
+<div id="compute-mean-ibu-by-style" class="section level3">
+<h3>Compute Mean IBU by Style</h3>
+<pre class="r"><code>IBUByStyle &lt;- Beers %&gt;% 
+  dplyr::group_by(Style) %&gt;% 
+  dplyr::summarize(IBUStyle = as.integer(round(mean(IBU, na.rm = TRUE), 0))) %&gt;% 
+  select(Style, IBUStyle) </code></pre>
+</div>
+<div id="substitute-mean-ibu-and-abv-style-data-for-missing-data" class="section level3">
+<h3>Substitute mean IBU and ABV style data for missing data</h3>
+<pre class="r"><code>BeerAndBreweryImproved &lt;- BeerAndBrewery %&gt;% 
+  inner_join(ABVByStyle, by = &quot;Style&quot;) %&gt;% 
+  inner_join(IBUByStyle, by = &quot;Style&quot;) %&gt;% 
+  mutate(ABV = coalesce(ABV, ABVStyle)) %&gt;%
+  mutate(IBU = coalesce(IBU, IBUStyle))</code></pre>
+<p>After missing data was filled in 0 beers have missing ABU content and 51 beers are missing an IBU rating.</p>
+</div>
+</div>
+<div id="question-4-plot-medain-alcohol-content-and-ibu-rating-by-state" class="section level2">
+<h2>Question 4 : Plot medain alcohol content and IBU rating by state</h2>
+<div id="summarize-and-enhance-data-for-plot" class="section level3">
+<h3>Summarize and enhance data for plot</h3>
+<pre class="r"><code>BeerAndBreweryImprovedByState &lt;- BeerAndBreweryImproved %&gt;% 
+  dplyr::group_by(State) %&gt;% 
+  dplyr::summarize(StateABVMean = mean(ABV, na.rm = TRUE), StateABVMedian = median(ABV, na.rm = TRUE), 
+                   StateIBUMean = mean(IBU, na.rm = TRUE), StateIBUMedian = median(IBU, na.rm = TRUE),
+                   StateBeerCount = n()) %&gt;% 
+  select(State, StateABVMean, StateABVMedian, StateIBUMean, StateIBUMedian, StateBeerCount) 
+
+BeerAndBreweryImprovedByState$StateABVMeanPercent &lt;- BeerAndBreweryImprovedByState$StateABVMean * 100.0
+BeerAndBreweryImprovedByState$StateABVMedianPercent &lt;- BeerAndBreweryImprovedByState$StateABVMedian * 100.0</code></pre>
+</div>
+<div id="plot-the-data" class="section level3">
+<h3>Plot the data</h3>
+<pre class="r"><code>scaleFactor = 0.1
+
+ggplot(data = BeerAndBreweryImprovedByState, aes(x=State,  width=.4)) +
+  geom_col(aes(y=StateABVMedianPercent), fill=&quot;blue&quot;) +
+  geom_col(aes(y=StateIBUMedian * scaleFactor), fill=&quot;red&quot;, position = position_nudge(x = -.4)) +
+  scale_y_continuous(name=&quot;Median percent ABV by State&quot;, breaks = c(0,1,2,3,4,5,6),
+                     sec.axis=sec_axis(~./scaleFactor, name=&quot;Median IBU by State&quot;, breaks = c(0,10,20,30,40,50,60))) +
+  theme(
+    axis.title.x.top=element_text(color=&quot;red&quot;),
+    axis.text.x.top=element_text(color=&quot;red&quot;),
+    axis.title.x.bottom=element_text(color=&quot;blue&quot;),
+    axis.text.x.bottom=element_text(color=&quot;blue&quot;)
+  ) +
+  coord_flip() +
+  labs(x = element_blank()) +
+  scale_x_discrete(limits = rev(levels(BeerAndBreweryImprovedByState$State)))</code></pre>
+<p><img src="Micro_Brewery_Analysis_files/figure-html/Question4Plot-1.png" width="768" /></p>
+</div>
+</div>
+<div id="question-5-states-with-the-highest-abv-and-ibu" class="section level2">
+<h2>Question 5 : States with the highest ABV and IBU</h2>
+<p>Unsure of exactly what is being asked. Do we need the state with the highest median ABV and IBU respectively or the states with the beer that has the highest ABV and IBU. The question was worked both ways</p>
+<div id="state-with-the-highest-median-abv-percent" class="section level3">
+<h3>State with the highest median ABV percent</h3>
+<pre class="r"><code>BeerAndBreweryImprovedByState[which.max(BeerAndBreweryImprovedByState$StateABVMedian),] %&gt;% select(State, StateABVMedianPercent)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   State StateABVMedianPercent
+##   &lt;fct&gt;                 &lt;dbl&gt;
+## 1 &quot; KY&quot;                  6.45</code></pre>
+</div>
+<div id="state-with-the-highest-median-ibu-rating" class="section level3">
+<h3>State with the highest median IBU rating</h3>
+<pre class="r"><code>BeerAndBreweryImprovedByState[which.max(BeerAndBreweryImprovedByState$StateIBUMedian),] %&gt;% select(State, StateIBUMedian)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   State StateIBUMedian
+##   &lt;fct&gt;          &lt;dbl&gt;
+## 1 &quot; DE&quot;             60</code></pre>
+</div>
+<div id="highest-abv-for-a-single-beer" class="section level3">
+<h3>Highest ABV for a single beer</h3>
+<pre class="r"><code>BeerAndBreweryImproved[which.max(BeerAndBreweryImproved$ABV),] %&gt;% select(State, Name.x, Name.y, ABV)</code></pre>
+<pre><code>##     State                  Name.x
+## 373    CO Upslope Brewing Company
+##                                                   Name.y   ABV
+## 373 Lee Hill Series Vol. 5 - Belgian Style Quadrupel Ale 0.128</code></pre>
+</div>
+<div id="highest-ibu-for-a-single-beer" class="section level3">
+<h3>Highest IBU for a single beer</h3>
+<pre class="r"><code>BeerAndBreweryImproved[which.max(BeerAndBreweryImproved$IBU),] %&gt;% select(State, Name.x, Name.y, IBU)</code></pre>
+<pre><code>##      State                  Name.x                    Name.y IBU
+## 1790    OR Astoria Brewing Company Bitter Bitch Imperial IPA 138</code></pre>
+</div>
+</div>
+<div id="question-6-summary-and-comments-on-distribution-of-abv-and-ibu-variables" class="section level2">
+<h2>Question 6 : Summary and comments on distribution of ABV and IBU variables</h2>
+<p>Most states have a median ABV for beers brewed of between five and six percent. Two states fall bellow that range UT and NJ, however NJ has only eight different flavors of beer being brewed in that state. Five states have a median ABV for beers brewed above six percent KY, DC, WV, NM, MI; however, DC and WV have less than ten different flavors of beer brewed in them.</p>
+</div>
+<div id="question-7-discuss-the-relationship-between-ibu-and-abv" class="section level2">
+<h2>Question 7 : Discuss the relationship between IBU and ABV</h2>
+<p>The graph below shows the relationship between IBU and ABV, in general as IBU rating increase so does ABV percent. The only part of the graph that shows a flat line is with very weak beers, those having an alcohol content less than 5 percent. A plateau exists with beers near 7 percent ABV not changing in bitterness. Higher alcohol content beers, those over 8 percent, change bitterness but at a slower rate than that of beers from 5 to 6.5 percent ABV.</p>
+<pre class="r"><code>ggplot(data = BeerAndBreweryImproved, mapping = aes(x = ABV * 100, y = IBU)) +
+  geom_point(position = &quot;dodge&quot;) + geom_smooth(se = FALSE) +
+  xlab(&quot;Percent ABV&quot;) + ylab(&quot;IBU Rating&quot;) + 
+  scale_x_continuous(breaks = c(2,3,4,5,6,7,8,9,10), limits = c(2.5,10)) +
+  labs(caption = &quot;ABV values of over 10 percent were left off due to sparseness of the data&quot;)</code></pre>
+<p><img src="Micro_Brewery_Analysis_files/figure-html/Question7-1.png" width="960" /></p>
+</div>
+<div id="question-8-investigate-the-differences-in-ibu-and-abv-between-ales-and-ipas" class="section level2">
+<h2>Question 8 : Investigate the differences in IBU and ABV between Ales and IPAs</h2>
+<p>First step is classifying the beers as IPA or Ale</p>
+<pre class="r"><code>BeerAndBreweryImproved$Classify &lt;- &quot;Other&quot;
+IsAleBool &lt;- str_detect(BeerAndBreweryImproved$Name.y, regex(&quot;\\bAle\\b&quot;, ignore_case = TRUE)) &amp; #Ale is a word
+            str_detect(BeerAndBreweryImproved$Name.y, regex(&quot;\\bIPA\\b|India Pale Ale&quot;, ignore_case = TRUE), negate = TRUE) #But does not include IPA
+
+IsIPABool &lt;- str_detect(BeerAndBreweryImproved$Name.y, regex(&quot;\\bIPA\\b|India Pale Ale&quot;, ignore_case = TRUE))
+
+BeerAndBreweryImproved[IsAleBool,]$Classify &lt;- &quot;Ale&quot;
+BeerAndBreweryImproved[IsIPABool,]$Classify &lt;- &quot;IPA&quot;
+
+# now add it for Style
+IsAleBool &lt;- str_detect(BeerAndBreweryImproved$Style, regex(&quot;\\bAle\\b&quot;, ignore_case = TRUE)) &amp; #Ale is a word
+  str_detect(BeerAndBreweryImproved$Style, regex(&quot;\\bIPA\\b|India Pale Ale&quot;, ignore_case = TRUE), negate = TRUE) #But does not include IPA
+
+IsIPABool &lt;- str_detect(BeerAndBreweryImproved$Style, regex(&quot;\\bIPA\\b|India Pale Ale&quot;, ignore_case = TRUE))
+
+BeerAndBreweryImproved[IsAleBool,]$Classify &lt;- &quot;Ale&quot;
+BeerAndBreweryImproved[IsIPABool,]$Classify &lt;- &quot;IPA&quot;</code></pre>
+<div id="plot-of-ibu-versus-abv-for-ipas-and-ales" class="section level3">
+<h3>Plot of IBU versus ABV for IPAs and Ales</h3>
+<pre class="r"><code>ggplot(data = BeerAndBreweryImproved[!BeerAndBreweryImproved$Classify == &#39;Other&#39;,],
+       mapping = aes(x = ABV * 100, y = IBU)) +
+  geom_point(position = &quot;dodge&quot;, mapping = aes(color = Classify)) + 
+  geom_smooth(se = FALSE, mapping = aes(color = Classify)) +
+  xlim(2.5, 10) + xlab(&quot;Percent ABV&quot;) + ylab(&quot;IBU Rating&quot;)</code></pre>
+<p><img src="Micro_Brewery_Analysis_files/figure-html/PlotIBUABV-1.png" width="960" /></p>
+</div>
+<div id="scale-and-filter-data" class="section level3">
+<h3>Scale and Filter data</h3>
+<p>The IBU rating and ABV percentage data needs to be scaled and filtered before the kNN model is created</p>
+<pre class="r"><code>BeerAndBreweryImproved &lt;- BeerAndBreweryImproved %&gt;% filter(!is.na(IBU))
+BeerAndBreweryImproved$zABV = scale(BeerAndBreweryImproved$ABV)
+BeerAndBreweryImproved$zIBU = scale(BeerAndBreweryImproved$IBU)
+
+BeerAndBreweryImproved2 = BeerAndBreweryImproved %&gt;%
+  filter(Classify != &#39;Other&#39;)
+
+splitPerc = .7</code></pre>
+</div>
+<div id="hyperparameter-tuning-for-knn-model" class="section level3">
+<h3>Hyperparameter tuning for kNN Model</h3>
+<p>The optimal “k” value for the model was calculated with the following code. The code takes 5 minutes to run so is set to not run by default (eval = FALSE), Change the eval parameter to “TRUE” to run the code block. The results of this code chunk indicates an optimal “k” value of 26 which results in a mean accuracy of 89.4%</p>
+<pre class="r"><code>set.seed(1)
+iterations = 500
+numks = 60
+
+masterAcc = matrix(nrow = iterations, ncol = numks)
+
+for(j in 1:iterations)
+{
+  trainIndices = sample(1:dim(BeerAndBreweryImproved2)[1],round(splitPerc * dim(BeerAndBreweryImproved2)[1]))
+  train = BeerAndBreweryImproved2[trainIndices,]
+  test = BeerAndBreweryImproved2[-trainIndices,]
+  for(i in 1:numks)
+  {
+    classifications = knn(train[,c(&#39;zABV&#39;,&#39;zIBU&#39;)], test[,c(&#39;zABV&#39;,&#39;zIBU&#39;)], train$Classify, k = i)
+    table(classifications,test$Classify)
+    CM = confusionMatrix(table(classifications,test$Classify))
+    masterAcc[j,i] = CM$overall[1]
+  }
+  
+}
+
+MeanAcc = colMeans(masterAcc)
+
+plot(seq(1,numks,1),MeanAcc, type = &quot;l&quot;, main = &quot;Hyperparameter Optimization&quot;, xlab = &quot;Number of k&#39;s&quot;, ylab = &quot;Mean Accuracy&quot;)
+
+which.max(MeanAcc)
+max(MeanAcc)</code></pre>
+</div>
+<div id="run-knn-model-with-k-11" class="section level3">
+<h3>Run kNN model with “k” = 11</h3>
+<p>Ouput tables and confusion matrix</p>
+<pre class="r"><code>trainIndices = sample(1:dim(BeerAndBreweryImproved2)[1],round(splitPerc * dim(BeerAndBreweryImproved2)[1]))
+BeerAndBreweryImprovedTrain2 = BeerAndBreweryImproved2[trainIndices,]
+BeerAndBreweryImprovedTest2 = BeerAndBreweryImproved2[-trainIndices,]
+BeerClassify &lt;- knn(BeerAndBreweryImprovedTrain2[,c(&#39;zABV&#39;,&#39;zIBU&#39;)], BeerAndBreweryImprovedTest2[,c(&#39;zABV&#39;,&#39;zIBU&#39;)], BeerAndBreweryImprovedTrain2$Classify, k = 11, prob = TRUE)
+#table(BeerClassify,BeerAndBreweryImprovedTest2$Classify)
+cm &lt;- confusionMatrix(table(BeerClassify,BeerAndBreweryImprovedTest2$Classify))
+print(as.matrix(cm))</code></pre>
+<pre><code>##     Ale IPA
+## Ale 271  27
+## IPA  19 146</code></pre>
+</div>
+</div>
+<div id="question-9-create-our-own-answers" class="section level2">
+<h2>Question 9 Create our own answers</h2>
+<div id="analysis-by-region-examining-abv-and-ibu-using-anova" class="section level3">
+<h3>Analysis by region examining ABV and IBU using ANOVA</h3>
+<p>Five regions were created by grouping the states into them. An ANOVA(ANalysis Of VAriance) was performed by region. This test looks for statistically significant differences in IBU and ABV by region.</p>
+</div>
+<div id="create-the-regions" class="section level3">
+<h3>Create the regions</h3>
+<pre class="r"><code>averageABV = BeerAndBreweryImproved %&gt;% 
+  group_by(State) %&gt;% 
+  summarize(ABV = mean(ABV), IBU = mean(IBU))
+
+west = BeerAndBreweryImproved %&gt;% 
+  filter(str_trim(State, side = c(&quot;both&quot;)) %in% c(&#39;WA&#39;,&#39;OR&#39;,&#39;CA&#39;,&#39;NV&#39;,&#39;ID&#39;,&#39;MT&#39;,&#39;WY&#39;,&#39;CO&#39;,&#39;NM&#39;,&#39;AZ&#39;,&#39;UT&#39;,&#39;AL&#39;,&#39;HI&#39;)) %&gt;%
+  mutate(region = &#39;W&#39;)
+
+midwest = BeerAndBreweryImproved %&gt;% 
+  filter(str_trim(State, side = c(&quot;both&quot;)) %in% c(&#39;ND&#39;,&#39;SD&#39;, &#39;NE&#39;, &#39;KS&#39;,&#39;MN&#39;,&#39;IA&#39;,&#39;MO&#39;,&#39;WI&#39;,&#39;IL&#39;,&#39;IN&#39;,&#39;MI&#39;,&#39;OH&#39;)) %&gt;%
+  mutate(region = &#39;MW&#39;)
+
+southwest = BeerAndBreweryImproved %&gt;% 
+  filter(str_trim(State, side = c(&quot;both&quot;)) %in% c(&#39;AZ&#39;,&#39;NM&#39;,&#39;OK&#39;,&#39;TX&#39;)) %&gt;%
+  mutate(region = &#39;SW&#39;)
+
+southeast = BeerAndBreweryImproved %&gt;% 
+  filter(str_trim(State, side = c(&quot;both&quot;)) %in% c(&#39;AK&#39;,&#39;LA&#39;,&#39;MA&#39;,&#39;AL&#39;,&#39;TN&#39;,&#39;KY&#39;,&#39;GA&#39;,&#39;WV&#39;,&#39;VA&#39;,&#39;NC&#39;,&#39;SC&#39;,&#39;FL&#39;)) %&gt;%
+  mutate(region = &#39;SE&#39;)
+
+northeast = BeerAndBreweryImproved %&gt;% 
+  filter(str_trim(State, side = c(&quot;both&quot;)) %in% c(&#39;ME&#39;,&#39;NH&#39;,&#39;VT&#39;,&#39;MA&#39;,&#39;CT&#39;,&#39;RI&#39;,&#39;NJ&#39;,&#39;NY&#39;,&#39;PA&#39;)) %&gt;%
+  mutate(region = &#39;NE&#39;)
+
+USregions = rbind(west,midwest,southwest,southeast,northeast)
+USregions$region = as.factor(USregions$region)</code></pre>
+</div>
+<div id="anova-of-abv-percent" class="section level3">
+<h3>ANOVA of ABV percent</h3>
+<p>While the mean alcohol content does vary by region the results of comparing region by region fall short of a statisticall significant.</p>
+<pre class="r"><code>ggboxplot(USregions, x = &quot;region&quot;, y = &quot;ABV&quot;, 
+          ylab = &quot;ABV&quot;, xlab = &quot;region&quot;) + ggtitle(&quot;ABV percent by region&quot;)</code></pre>
+<p><img src="Micro_Brewery_Analysis_files/figure-html/ABVANOVABxplt-1.png" width="960" /></p>
+<pre class="r"><code>abvModel = aov(ABV~region, data = USregions)
+abvTukey = TukeyHSD(abvModel)
+abvpvals &lt;- abvTukey$region[,4]</code></pre>
+<p>Four relation ships come near to 95% siginifigance NE-MW, W-NE, SE-MW, W-SE</p>
+<pre class="r"><code>sort(abvpvals)</code></pre>
+<pre><code>##      NE-MW      SE-MW       W-NE       W-SE      SW-SE      SW-NE 
+## 0.06025936 0.06241135 0.07647672 0.07907995 0.65705075 0.66826751 
+##      SW-MW       W-SW       W-MW      SE-NE 
+## 0.95396015 0.97684239 0.99961621 0.99999940</code></pre>
+</div>
+<div id="anova-of-ibu-rating" class="section level3">
+<h3>ANOVA of IBU rating</h3>
+<p>While the mean alcohol content does vary by region the results of comparing region by region fall short of a statisticall significant.</p>
+<pre class="r"><code>ggboxplot(USregions, x = &quot;region&quot;, y = &quot;IBU&quot;, 
+          ylab = &quot;IBU&quot;, xlab = &quot;region&quot;) + ggtitle(&quot;IBU rating by region&quot;)</code></pre>
+<p><img src="Micro_Brewery_Analysis_files/figure-html/IBUBxplt-1.png" width="672" /></p>
+<pre class="r"><code>IBUModel = aov(IBU~region, data = USregions)
+ibuTukey &lt;- TukeyHSD(IBUModel)
+ibupvals &lt;- ibuTukey$region[,4]</code></pre>
+</div>
+<div id="ibu-rating-does-have-a-statistically-significant-difference-between-regions" class="section level3">
+<h3>IBU rating does have a statistically significant difference between regions</h3>
+<p>The difference in IBU rating between the “W” and “MW” regions is statistically significantly p-Value = 0.0127</p>
+<pre class="r"><code>sort(ibupvals)</code></pre>
+<pre><code>##       W-MW       W-SW       W-SE       W-NE      SW-NE      SW-SE 
+## 0.01374398 0.09722614 0.12819134 0.16492768 0.97654558 0.99072462 
+##      NE-MW      SW-MW      SE-MW      SE-NE 
+## 0.99615143 0.99690581 0.99966704 0.99990640</code></pre>
+</div>
+<div id="ibu-rating-versus-abv-percentage-by-style" class="section level3">
+<h3>IBU rating versus ABV percentage by style</h3>
+<p>Here we see beers IBU rating versus ABV percent for each style. Style was determined by examing beer names and styles for key words.</p>
+<pre class="r"><code>styles = c(&quot;Lager&quot;,&quot;Pilsner&quot;,&quot;Stout&quot;,&quot;Porter&quot;,&quot;Weissbier&quot;,&quot;Bock&quot;,&quot;Bitter&quot;,&quot;Hefeweizen&quot;,&quot;Oktoberfest&quot;,&quot;Tripel&quot;,&quot;Witbier&quot;)
+
+for(i in 1:length(styles)){
+  style = str_trim(styles[i], side = c(&quot;both&quot;))
+  styleRegex = paste(&quot;\\b&quot;, style, &quot;\\b&quot;, sep=&quot;&quot;)
+  # Name
+  IsStyleBoolName &lt;- str_detect(BeerAndBreweryImproved$Name.y, regex(styleRegex, ignore_case = TRUE))
+  #BeerAndBreweryImproved[IsStyleBool,]$Classify &lt;- style
+  # Style
+  IsStyleBoolStyle &lt;- str_detect(BeerAndBreweryImproved$Style, regex(styleRegex, ignore_case = TRUE))
+  BeerAndBreweryImproved[IsStyleBoolName|IsStyleBoolStyle,]$Classify &lt;- style
+}
+
+#scatter plot
+BeerAndBreweryImproved %&gt;% filter(Classify != &quot;Other&quot; &amp; Classify != &quot;Ale&quot; &amp; Classify != &quot;IPA&quot;) %&gt;% 
+ggplot(mapping = aes(x = ABV * 100, y = IBU)) +
+  geom_point(position = &quot;dodge&quot;, mapping = aes(color = Classify)) + facet_wrap(vars(Classify), ncol = 3) +
+  ggtitle(&quot;IBU rating versus ABV percent by style&quot;) +
+  xlim(2.5, 10) + xlab(&quot;Percent ABV&quot;) + ylab(&quot;IBU Rating&quot;)</code></pre>
+<p><img src="Micro_Brewery_Analysis_files/figure-html/Styleplot-1.png" width="960" /></p>
+<p>The plots above are for styles that had a significant population of beers and had not been previously examined</p>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<p>Removing duplicates and imputing NA values were important for us to provide a more accurate analysis. Not doing so could potentially provide analysis and models that were not as accurate. When performing exploratory data analysis, looking at average ABV percent or IBU rating by state alone can be misleading due to small number of beers in some states. It is important to apply a statistical procedure to see if there actually is a difference.<br />
+</p>
+<p>For classification purposes, the kNN model was used to separate Ales from IPAs with a high degree of accuracy, specificity, sensitivity, recall, and precision. When combined with other data sources like market segmentation or sales, this model could potentially be used to help identify ale or IPA preferences in a region.<br />
+</p>
+<p>We choose to perform an ANOVA to see if there was a difference between geographic regions in the United States based on ABV and IBUs for Ales and IPAs. The output from the ANOVAs and Tukey HSD post hoc test show that the western region of the United States prefers beer that has a higher IBU rating; and that Alcohol content as measured by ABV percent does not show a statistically significant difference across regions. Style data can also be used to group current IBU rating and ABV percent of available beers. This information is useful in generating profiles based on IBU and ABV that may be useful in identifying and grouping different beer styles in the future.<br />
+</p>
+</div>
+<div id="interactive-eda-via-shiny" class="section level3">
+<h3>Interactive EDA via Shiny</h3>
+<p>For an interactive app featuring EDA for this project please visit: <a href="https://7446nguyen.shinyapps.io/portfolio/" class="uri">https://7446nguyen.shinyapps.io/portfolio/</a></p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
