@@ -1,0 +1,9 @@
+---
+title: "Welcome to Jeff's Portfolio!"
+author: "Jeff Nguyen"
+output: html_document
+---
+
+Welcome to my collection of projects featuring data science tools and techniques!  I hope to use this a a repositiory for quick access and reference for projects that I complete here at SMU's MSDS program.
+
+

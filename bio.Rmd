@@ -1,0 +1,13 @@
+---
+title: "About Me"
+output: html_document
+---
+
+I am an aspiring Data Scientist that leverages data to deliver concise data driven story telling and actionable insights. I joined the SMU MSDS program to gain a deeper understanding of the theory and applied practices of data science techniques.  I'm excited to be in this program and hope to apply this new knowledge to my work!
+
+**Name**: Jeff Nguyen\
+**Location**: Austin, TX\
+**Interests**: Machine Learning, NLP, Table Tennis\
+**Work**: Charter Communications: Business Data Analyst II\
+**Education**: University of Texas at Austin BS Biology:Microbiology\
+**LinkedIn**: https://www.linkedin.com/in/7446-nguyen/

@@ -1,0 +1,12 @@
+name: "SMU MSDS"
+navbar:
+  title: "SMU MSDS"
+  
+  left:
+  - text: "Home"
+    href: index.html
+  - text: "About Me"
+    href: bio.html
+  - text: "Micro Brewery EDA"
+    href: Micro_Brewery_Analysis.html
+    always_allow_html: yes
