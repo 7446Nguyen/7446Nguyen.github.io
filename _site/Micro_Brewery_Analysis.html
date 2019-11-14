@@ -934,8 +934,8 @@ BeerClassify &lt;- knn(BeerAndBreweryImprovedTrain2[,c(&#39;zABV&#39;,&#39;zIBU&
 cm &lt;- confusionMatrix(table(BeerClassify,BeerAndBreweryImprovedTest2$Classify))
 print(as.matrix(cm))</code></pre>
 <pre><code>##     Ale IPA
-## Ale 289  20
-## IPA  27 127</code></pre>
+## Ale 277  23
+## IPA  22 141</code></pre>
 </div>
 </div>
 <div id="question-9-create-our-own-answers" class="section level2">
@@ -1041,6 +1041,9 @@ ggplot(mapping = aes(x = ABV * 100, y = IBU)) +
 </p>
 <p>We choose to perform an ANOVA to see if there was a difference between geographic regions in the United States based on ABV and IBUs for Ales and IPAs. The output from the ANOVAs and Tukey HSD post hoc test show that the western region of the United States prefers beer that has a higher IBU rating; and that Alcohol content as measured by ABV percent does not show a statistically significant difference across regions. Style data can also be used to group current IBU rating and ABV percent of available beers. This information is useful in generating profiles based on IBU and ABV that may be useful in identifying and grouping different beer styles in the future.<br />
 </p>
+</div>
+<div id="interactive-eda-via-shiny" class="section level3">
+<h3>Interactive EDA via Shiny</h3>
 <p>For an interactive app featuring EDA for this project please visit: <a href="https://7446nguyen.shinyapps.io/portfolio/" class="uri">https://7446nguyen.shinyapps.io/portfolio/</a></p>
 </div>
 </div>
